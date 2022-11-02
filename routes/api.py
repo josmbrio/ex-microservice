@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
-from redis_connection import jwt_redis_blocklist
+from redis_connection.redis_connection import jwt_redis_denylist
 
 
 info = Blueprint('info', __name__)
@@ -15,7 +15,7 @@ def get_info():
     if request_api_key == api_key:
         var_to = request.json['to']
         jti = get_jwt()["jti"]
-        jwt_redis_blocklist.set(jti, "", ex=timedelta(minutes=1))
+        jwt_redis_denylist.set(jti, "", ex=timedelta(minutes=1))
         return jsonify({"message": "Hello " + var_to + " your message will be send"})
     else:
         return jsonify({"message": "Incorrect API KEY"})

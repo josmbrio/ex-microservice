@@ -1,10 +1,9 @@
-from dotenv import load_dotenv
 from flask import Flask
 from routes.api import info
 from routes.token import authorization
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
-from redis_connection import jwt_redis_blocklist
+from redis_connection.redis_connection import jwt_redis_denylist
 
 application = Flask(__name__)
 
@@ -19,7 +18,7 @@ jwt = JWTManager(application)
 @jwt.token_in_blocklist_loader
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     jti = jwt_payload["jti"]
-    token_in_redis = jwt_redis_blocklist.get(jti)
+    token_in_redis = jwt_redis_denylist.get(jti)
     return token_in_redis is not None
 
 
@@ -29,4 +28,4 @@ application.register_blueprint(info)
 
 if __name__ == '__main__':
 #    load_dotenv()
-    application.run(debug=True, port='5000', host='localhost')
+    application.run(debug=True, port='5000', host='0.0.0.0')
