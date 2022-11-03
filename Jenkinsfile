@@ -10,6 +10,14 @@ pipeline {
     }
     
     stages {
+
+        stage("Test Code"){
+            steps{
+                script {
+                    sh "python -m pytest"
+                }
+            }
+        }
         stage("Build") {
             steps {
                 script {
