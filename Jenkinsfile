@@ -7,7 +7,7 @@ pipeline {
         IMAGE_REPO = "josmbrio/microservice-ex"
         IMAGE_NAME = "py-1.0"
         IMAGE_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
-        CONTAINER_ID = ""
+        CONTAINER_NAME_TEST = "${IMAGE_REPO}-${IMAGE_NAME}_test_pipeline"
     }
     
     stages {
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    sh "docker run -d -p 5555:5000 ${IMAGE_TAG}"
+                    sh "docker run -d -p 5555:5000 --name ${CONTAINER_NAME_TEST} ${IMAGE_TAG}"
                 }
             }
         }
@@ -76,7 +76,14 @@ pipeline {
 		}
 		failure {
             echo "Error in pipeline. Please check"
+            sh "docker stop ${CONTAINER_NAME_TEST}"
+            sh "docker rm ${CONTAINER_NAME_TEST}"
 			//deleteDir()	
+		}
+        always {
+            echo "Stopping and Deleting docker container test"
+            sh "docker stop ${CONTAINER_NAME_TEST}"
+            sh "docker rm ${CONTAINER_NAME_TEST}"
 		}
 	}
 
