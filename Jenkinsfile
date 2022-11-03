@@ -4,10 +4,12 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS_ID = "docker-hub-repo"
-        IMAGE_REPO = "josmbrio/microservice-ex"
+        IMAGE_REPO_NAME_P1 = "josmbrio"
+        IMAGE_REPO_NAME_P2 = "microservice-ex"
+        IMAGE_REPO = "${IMAGE_REPO_NAME_P1}/${IMAGE_REPO_NAME_P2}"
         IMAGE_NAME = "py-1.0"
         IMAGE_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
-        CONTAINER_NAME_TEST = "${IMAGE_REPO}-${IMAGE_NAME}_test_pipeline"
+        CONTAINER_NAME_TEST = "${IMAGE_REPO_NAME_P2}_test_pipeline"
     }
     
     stages {
