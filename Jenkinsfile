@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    docker run -d -p 5000:5000 ${IMAGE_TAG}
+                    sh "docker run -d -p 5000:5000 ${IMAGE_TAG}"
                 }
             }
         }
