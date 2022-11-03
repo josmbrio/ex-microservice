@@ -3,6 +3,7 @@
 pipeline {
     agent any
     environment {
+        DOCKERHUB_CREDENTIALS_ID = "docker-hub-repo"
         IMAGE_REPO = "josmbrio/microservice-ex"
         IMAGE_NAME = "py-1.0"
         IMAGE_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
@@ -31,7 +32,7 @@ pipeline {
             steps {
                 script {
                     echo "Pushing image to Dockerhub repository"
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
                     }
                     sh "docker push ${IMAGE_TAG}"
