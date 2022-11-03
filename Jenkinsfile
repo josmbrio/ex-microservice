@@ -27,7 +27,6 @@ pipeline {
             }
         }
 
-    stages {
         stage("Push to Repository") {
             steps {
                 script {
