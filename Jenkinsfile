@@ -7,6 +7,7 @@ pipeline {
         IMAGE_REPO = "josmbrio/microservice-ex"
         IMAGE_NAME = "py-1.0"
         IMAGE_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
+        CONTAINER_ID = ""
     }
     
     stages {
@@ -67,4 +68,16 @@ pipeline {
             }
         }
     }
+    
+    post {
+		success {
+			echo "Pipeline executed successfully"
+			//deleteDir()
+		}
+		failure {
+            echo "Error in pipeline. Please check"
+			//deleteDir()	
+		}
+	}
+
 }
