@@ -23,7 +23,6 @@ def get_info():
 
 @info.errorhandler(405)
 def error_405(error=None):
-    print("ERRRORRRRRr 405")
     response = jsonify({"message": "ERROR"})
     response.status_code = 405
     return response

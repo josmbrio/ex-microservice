@@ -11,9 +11,10 @@ pipeline {
     
     stages {
 
-        stage("Test Code"){
+        stage("Unit Test"){
             steps{
                 script {
+                    echo "Entering unit test stage"
                     sh "python -m pytest"
                 }
             }
@@ -28,10 +29,11 @@ pipeline {
             }
         }
         
-        stage("Test") {
+        stage("Test Image") {
             steps {
                 script {
                     echo "Entering test stage"
+                    docker run -d -p 5000:5000 ${IMAGE_TAG}
                 }
             }
         }
