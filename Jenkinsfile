@@ -5,7 +5,7 @@ pipeline {
     environment {
         IMAGE_REPO = "josmbrio/microservice-ex"
         IMAGE_NAME = "py-1.0"
-//        DOCKER_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
+        DOCKER_TAG = "${IMAGE_REPO}:${IMAGE_NAME}"
     }
     
     stages {
@@ -15,9 +15,9 @@ pipeline {
                     echo "Entering build stage..."
                     echo "Building image from Dockerfile"
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                        sh "docker build . -t ${IMAGE_REPO}:${IMAGE_NAME}"
+                        sh "docker build . -t ${DOCKER_TAG}"
                         sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                        sh "docker push ${IMAGE_REPO}:${IMAGE_NAME}"
+                        sh "docker push ${DOCKER_TAG}"
                     }
                     
                 }
