@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    sh "docker run -d -p 5555:5000 --name ${CONTAINER_NAME_TEST} ${IMAGE_TAG}"
+                    sh "docker run -d -p 9000:9000 --name ${CONTAINER_NAME_TEST} ${IMAGE_TAG}"
 
                     sh "docker stop ${CONTAINER_NAME_TEST}"
                     sh "docker rm ${CONTAINER_NAME_TEST}"
