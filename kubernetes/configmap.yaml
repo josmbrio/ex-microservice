@@ -4,3 +4,4 @@ data:
 kind: ConfigMap
 metadata:
   name: redis
+  namespace: ex-microservices
