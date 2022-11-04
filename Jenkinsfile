@@ -37,6 +37,9 @@ pipeline {
                 script {
                     echo "Entering test stage"
                     sh "docker run -d -p 5555:5000 --name ${CONTAINER_NAME_TEST} ${IMAGE_TAG}"
+
+                    sh "docker stop ${CONTAINER_NAME_TEST}"
+                    sh "docker rm ${CONTAINER_NAME_TEST}"
                 }
             }
         }
@@ -63,9 +66,16 @@ pipeline {
         }
 
         stage("Deploy") {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('jenkins_aws_access_key_id')
+                AWS_SECRET_ACCESS_KEY = credentials('jenkins_aws_secret_access_key')
+                APP_NAME = 'ex-microservice'
+            }
             steps {
                 script {
                     echo "Entering deployment stage"
+                    sh 'envsubst < ./kubernetes/deployment.yaml | kubectl apply -f -'
+                    sh 'envsubst < ./kubernetes/service.yaml | kubectl apply -f -'
                 }
             }
         }
@@ -74,19 +84,12 @@ pipeline {
     post {
         always {
             echo "############  END OF PIPELINE ############"
-            echo "Stopping and Deleting docker container test"
-            sh "docker stop ${CONTAINER_NAME_TEST}"
-            sh "docker rm ${CONTAINER_NAME_TEST}"
 		}        
 		success {
 			echo "Pipeline executed successfully"
-			//deleteDir()
 		}
 		failure {
             echo "Error in pipeline. Please check"
-            sh "docker stop ${CONTAINER_NAME_TEST}"
-            sh "docker rm ${CONTAINER_NAME_TEST}"
-			//deleteDir()	
 		}
 	}
 
