@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: $APP_NAME
+    namespace: ex-microservices
     labels:
         app: $APP_NAME
 spec:
@@ -18,4 +19,29 @@ spec:
                 - name: $APP_NAME
                   image: $IMAGE_TAG
                   ports:
-                  - containerPort: 5000
+                  - containerPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: redis
+    namespace: ex-microservices
+    labels:
+        app: redis
+spec:
+    selector:
+        matchLabels:
+            app: redis
+    template:
+        metadata:
+            labels:
+                app: redis
+        spec:
+            imagePullSecrets:
+                - name: docker-registry
+            containers:
+                - name: redis
+                  image: redis
+                  imagePullPolicy: Always
+                  ports:
+                  - containerPort: 6379
