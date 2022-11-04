@@ -4,14 +4,15 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
-    container_name: redis
+    container_name: redis-server
     volumes:
       - redis-data:/data
   microservice-ex:
     image: josmbrio/microservice-ex:py-1.0
     ports:
-      - 5000:5000
-#    environment:
+      - 9000:9000
+    environment:
+      - REDIS_HOST=redis-server
     container_name: microservice-ex
     depends_on:
       - redis

@@ -1,7 +1,0 @@
-apiVersion: v1
-data:
-  HOST: redis.ex-microservices
-kind: ConfigMap
-metadata:
-  name: redis
-  namespace: ex-microservices
