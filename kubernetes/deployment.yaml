@@ -21,6 +21,12 @@ spec:
                   imagePullPolicy: Always
                   ports:
                   - containerPort: 9000
+                  env:
+                    - name: REDIS_HOST
+                      valueFrom:
+                        configMapKeyRef:
+                          name: redis
+                          key: HOST
 ---
 apiVersion: apps/v1
 kind: Deployment
