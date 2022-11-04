@@ -130,6 +130,6 @@ dmypy.json
 .idea/
 
 docker-compose.yaml
-terraform/.terraform/
-terraform/.terraform.lock.hcl
+**/.terraform/*
+**/.terraform.lock.hcl
 
