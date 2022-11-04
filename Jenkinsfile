@@ -76,6 +76,7 @@ pipeline {
                     echo "Entering deployment stage"
                     sh 'envsubst < ./kubernetes/deployment.yaml | kubectl apply -f -'
                     sh 'envsubst < ./kubernetes/service.yaml | kubectl apply -f -'
+                    sh 'kubectl apply -f ./kubernetes/configmap.yaml'
                 }
             }
         }
