@@ -129,7 +129,8 @@ dmypy.json
 .pyre/
 .idea/
 
+# Other files
 docker-compose.yaml
-terraform/.terraform/*
+terraform/.terraform/
 terraform/.terraform.lock.hcl
 
