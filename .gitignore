@@ -131,6 +131,5 @@ dmypy.json
 
 # Other files
 docker-compose.yaml
-terraform/.terraform/
-terraform/.terraform.lock.hcl
+terraform/
 
