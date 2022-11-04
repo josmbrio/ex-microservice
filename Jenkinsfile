@@ -72,6 +72,12 @@ pipeline {
     }
     
     post {
+        always {
+            echo "############  END OF PIPELINE ############"
+            echo "Stopping and Deleting docker container test"
+            sh "docker stop ${CONTAINER_NAME_TEST}"
+            sh "docker rm ${CONTAINER_NAME_TEST}"
+		}        
 		success {
 			echo "Pipeline executed successfully"
 			//deleteDir()
@@ -81,11 +87,6 @@ pipeline {
             sh "docker stop ${CONTAINER_NAME_TEST}"
             sh "docker rm ${CONTAINER_NAME_TEST}"
 			//deleteDir()	
-		}
-        always {
-            echo "Stopping and Deleting docker container test"
-            sh "docker stop ${CONTAINER_NAME_TEST}"
-            sh "docker rm ${CONTAINER_NAME_TEST}"
 		}
 	}
 
