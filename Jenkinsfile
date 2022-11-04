@@ -64,8 +64,7 @@ pipeline {
                 }
             }
         }
-
-        stage("Deploy") {
+        stage("Deploy in Production") {
             when {
                 expression {
                     return env.GIT_BRANCH == "main"
@@ -85,6 +84,9 @@ pipeline {
 
                 }
             }
+        }
+
+        stage("Deploy in Development") {
             when {
                 expression {
                     return env.GIT_BRANCH == "features"
@@ -92,7 +94,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "This is features"
+                    echo "Deployment in EC2 instance with Docker Compose
                 }
             }
         }
