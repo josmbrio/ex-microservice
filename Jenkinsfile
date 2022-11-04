@@ -94,7 +94,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Deployment in EC2 instance with Docker Compose
+                    echo "Deployment in EC2 instance with Docker Compose"
                 }
             }
         }
