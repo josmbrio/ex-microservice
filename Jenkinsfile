@@ -99,9 +99,6 @@ pipeline {
         }
 
         stage("Deploy in Development") {
-            environment {
-                DEPLOY_SERVER_KEY =
-            }
             when {
                 expression {
                     return env.GIT_BRANCH == "features"
