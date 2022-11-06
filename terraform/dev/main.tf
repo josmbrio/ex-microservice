@@ -196,5 +196,8 @@ resource "aws_lb_listener" "ex-micro-listener" {
   }
 }
 
+output "dns_name_load_balancer" {
+  value = aws_lb.ex_micro_lb.dns_name
+}
 
 
