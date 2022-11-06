@@ -27,12 +27,16 @@ pipeline {
                 }
             }
         }
-        stage("Unit Test"){
+        stage("Static Code Analysis"){
             steps{
                 script {
-                    echo "Entering unit test stage"
                     dir('application') {
-                        gv.test_code()
+                        def SONARQUBE_TOKEN = credentials('sonarqube-token')
+                        sh "sonar-scanner \
+                            -Dsonar.projectKey=ex-microservices \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://localhost:4000 \
+                            -Dsonar.login=${SONARQUBE_TOKEN}"
                     }
                 }
             }
