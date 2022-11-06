@@ -76,7 +76,7 @@ pipeline {
                     echo "Provision Development Infra"
                     dir('terraform/dev'){
                         def output = gv.provision_ec2_with_terraform()
-                        DNS_NAME_LOAD_BALANCER = output[0]
+                        EC2_URL_LOAD_BALANCER = output[0]
                         EC2_PUBLIC_IP_SERVER_1 = output[1]
                         EC2_PUBLIC_IP_SERVER_2 = output[2]
 
@@ -127,7 +127,7 @@ pipeline {
                         KUBE_CONFIG = kube_config_aws_eks
                         gv.deploy_to_k8s("./kubernetes/redis.yaml")
                         gv.deploy_to_k8s("./kubernetes/microservice.yaml")
-                        gv.get_url_load_balancer(APP_NAME, APP_NAMESPACE)
+                        K8S_APP_URL_LOAD_BALANCER = gv.get_url_load_balancer(APP_NAME, APP_NAMESPACE)
                     }
                 }
             }
@@ -141,10 +141,10 @@ pipeline {
 		success {
 			echo "Pipeline executed successfully"
 			echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
-            echo "URL: http://${DNS_NAME_LOAD_BALANCER}"
+            echo "URL: http://${EC2_URL_LOAD_BALANCER}"
 
             echo "---------FOR PRODUCTION ENVIRONMENT-----------"
-            echo "URL: http://"
+            echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}"
 		}
 		failure {
             echo "Error in pipeline. Please check"
