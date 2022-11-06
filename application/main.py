@@ -1,5 +1,5 @@
 from flask import Flask
-from routes.api import info
+from routes.endpoints import info
 from routes.token import authorization
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
