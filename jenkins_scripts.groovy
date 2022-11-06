@@ -44,4 +44,22 @@ def provision_ec2_with_terraform() {
     return list
 }
 
+def deploy_app_to_ec2(start_script, docker_compose_file, image_tag, ip_address) {
+    def shell_cmd = "bash ${start_file} ${image_tag}"
+    def ec2_instance = "ec2-user@${ip_address}"
+    def home_dir = "/home/ec2-user/"
+    sh "scp -o StrictHostKeyChecking=no ${start_script} ${ec2_instance}:${home_dir}"
+    sh "scp -o StrictHostKeyChecking=no ${docker_compose_file} ${ec2_instance}:${home_dir}"
+    sh "ssh -o StrictHostKeyChecking=no ${ec2_instance} ${shell_cmd}"
+}
+
+def deploy_to_k8s() {
+    sh 'envsubst < ./kubernetes/redis.yaml | kubectl apply -f -'
+    sh 'envsubst < ./kubernetes/microservice.yaml | kubectl apply -f -'
+}
+
+def get_url_load_balancer(svc, namespace) {
+    sh "kubectl get svc/${svc} -n ${namespace} -o jsonpath='{.status.loadBalancer.ingress[*].hostname}'"
+}
+
 return this

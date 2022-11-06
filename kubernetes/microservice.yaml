@@ -1,30 +1,30 @@
 apiVersion: v1
 data:
-  HOST: redis
+  HOST: $REDIS_HOST
 kind: ConfigMap
 metadata:
   name: redis
-  namespace: ex-microservices
+  namespace: $APP_NAMESPACE
 ---
 apiVersion: v1
 kind: Service
 metadata:
     name: $APP_NAME
-    namespace: ex-microservices
+    namespace: $APP_NAMESPACE
 spec:
     selector:
         app: $APP_NAME
     type: LoadBalancer
     ports:
         - protocol: TCP
-          port: 9000
+          port: 80
           targetPort: 9000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: $APP_NAME
-    namespace: ex-microservices
+    namespace: $APP_NAMESPACE
     labels:
         app: $APP_NAME
 spec:

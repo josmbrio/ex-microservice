@@ -15,6 +15,8 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('jenkins_aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('jenkins_aws_secret_access_key')
         APP_NAME = 'ex-microservice'
+        APP_NAMESPACE = 'ex-microservices'
+        REDIS_HOST = 'redis'
     }
     
     stages {
@@ -35,7 +37,7 @@ pipeline {
                 }
             }
         }
-        stage("Build") {
+        stage("Build Artifact") {
             steps {
                 script {
                     echo "Entering build stage..."
@@ -92,17 +94,19 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Deployment in EC2 instance with Docker Compose"
 
-                    echo "Deploying docker image to EC2"
-                    echo "${EC2_PUBLIC_IP_SERVER_1}"
+                    echo "Deploying docker image to EC2 Server 1"
+                    gv.deploy_app_to_ec2("./server-cmds.sh",
+                                        "./docker-compose.yaml",
+                                        IMAGE_TAG,
+                                        EC2_PUBLIC_IP_SERVER_1)
 
-                    def shellCmd = 'bash server-cmds.sh ${IMAGE_TAG}'
-                    def ec2Instance = "ec2-user@${EC2_PUBLIC_IP_SERVER_1}"
+                    echo "Deploying docker image to EC2 Server 2"
+                    gv.deploy_app_to_ec2("./server-cmds.sh",
+                                        "./docker-compose.yaml",
+                                        IMAGE_TAG,
+                                        EC2_PUBLIC_IP_SERVER_2)
 
-                    sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user/"
-                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user/"
-                    sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                 }
             }
         }
@@ -114,11 +118,17 @@ pipeline {
             }
             steps {
                 script {
+                    environment {
+                        KUBE_CONFIG=""
+                    }
                     echo "Entering deployment stage"
-                    sh 'envsubst < ./kubernetes/redis.yaml | kubectl apply -f -'
-                    sh 'envsubst < ./kubernetes/microservice.yaml | kubectl apply -f -'
 
-
+                    withCredentials([file(credentialsId: 'kube_config_aws_eks', variable: 'kube_config_aws_eks')]) {
+                        KUBE_CONFIG = kube_config_aws_eks
+                        gv.deploy_to_k8s("./kubernetes/redis.yaml")
+                        gv.deploy_to_k8s("./kubernetes/microservice.yaml")
+                        gv.get_url_load_balancer(APP_NAME, APP_NAMESPACE)
+                    }
                 }
             }
         }
@@ -130,6 +140,11 @@ pipeline {
 		}        
 		success {
 			echo "Pipeline executed successfully"
+			echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
+            echo "URL: http://${DNS_NAME_LOAD_BALANCER}"
+
+            echo "---------FOR PRODUCTION ENVIRONMENT-----------"
+            echo "URL: http://"
 		}
 		failure {
             echo "Error in pipeline. Please check"
