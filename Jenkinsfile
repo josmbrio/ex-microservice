@@ -17,12 +17,20 @@ pipeline {
     }
     
     stages {
-
+        stage("Init") {
+            steps {
+                script {
+                    gv = load "jenkins_scripts.groovy"
+                }
+            }
+        }
         stage("Unit Test"){
             steps{
                 script {
                     echo "Entering unit test stage"
-                    sh "python -m pytest"
+                    dir('application') {
+                        sh "python -m pytest"
+                    }
                 }
             }
         }
@@ -30,8 +38,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering build stage..."
-                    echo "Building image from Dockerfile"
-                    sh "docker build . -t ${IMAGE_TAG}"
+                    gv.build_docker_image()
                 }
             }
         }
@@ -61,7 +68,7 @@ pipeline {
             }
         }
 
-        stage("Provision Development Infra") {
+        stage("Provisioning Infra Development)") {
             when {
                 expression {
                     return env.GIT_BRANCH == "features"
@@ -73,11 +80,36 @@ pipeline {
                     dir('terraform/dev'){
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
-                        EC2_PUBLIC_IP = sh(
-                            script: "terraform output ec2_public_ip",
+                        EC2_PUBLIC_IP_SERVER_1 = sh(
+                            script: "terraform output ec2_public_ip_server_1",
                             returnStdout: true
                         ).toString().trim()
+
+                        echo "Waiting for EC2 instance(s) to initialize"
+                        sleep(time: 120, unit: "SECONDS")
                     }
+                }
+            }
+        }
+        stage("Deploy in Development") {
+            when {
+                expression {
+                    return env.GIT_BRANCH == "features"
+                }
+            }
+            steps {
+                script {
+                    echo "Deployment in EC2 instance with Docker Compose"
+
+                    echo "Deploying docker image to EC2"
+                    echo "${EC2_PUBLIC_IP_SERVER_1}"
+
+                    def shellCmd = 'bash server-cmds.sh ${IMAGE_TAG}'
+                    def ec2Instance = "ec2-user@${EC2_PUBLIC_IP_SERVER_1}"
+
+                    sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user/"
+                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user/"
+                    sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                 }
             }
         }
@@ -94,31 +126,6 @@ pipeline {
                     sh 'envsubst < ./kubernetes/microservice.yaml | kubectl apply -f -'
 
 
-                }
-            }
-        }
-
-        stage("Deploy in Development") {
-            when {
-                expression {
-                    return env.GIT_BRANCH == "features"
-                }
-            }
-            steps {
-                script {
-                    echo "Deployment in EC2 instance with Docker Compose"
-                    echo "Waiting for EC2 server to initialize"
-                    sleep(time: 120, unit: "SECONDS")
-
-                    echo "Deploying docker image to EC2"
-                    echo "${EC2_PUBLIC_IP}"
-
-                    def shellCmd = 'bash server-cmds.sh ${IMAGE_TAG}'
-                    def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
-
-                    sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user/"
-                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user/"
-                    sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                 }
             }
         }
