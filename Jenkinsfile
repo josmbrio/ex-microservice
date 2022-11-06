@@ -30,7 +30,7 @@ pipeline {
                 script {
                     echo "Entering unit test stage"
                     dir('application') {
-                        sh "python -m pytest"
+                        gv.test_code()
                     }
                 }
             }
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering build stage..."
-                    gv.build_docker_image()
+                    gv.build_docker_image(IMAGE_TAG)
                 }
             }
         }
@@ -48,10 +48,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    sh "docker run -d -p 9000:9000 --name ${CONTAINER_NAME_TEST} ${IMAGE_TAG}"
-
-                    sh "docker stop ${CONTAINER_NAME_TEST}"
-                    sh "docker rm ${CONTAINER_NAME_TEST}"
+                    test_docker_image(IMAGE_TAG, CONTAINER_NAME_TEST)
                 }
             }
         }
