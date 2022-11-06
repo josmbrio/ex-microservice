@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    test_docker_image(IMAGE_TAG, CONTAINER_NAME_TEST)
+                    test_docker_image(IMAGE_TAG,CONTAINER_NAME_TEST)
                 }
             }
         }
