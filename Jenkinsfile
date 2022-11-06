@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering test stage"
-                    test_docker_image(IMAGE_TAG,CONTAINER_NAME_TEST)
+                    gv.test_docker_image(IMAGE_TAG,CONTAINER_NAME_TEST)
                 }
             }
         }
@@ -57,11 +57,8 @@ pipeline {
             steps {
                 script {
                     echo "Pushing image to Dockerhub repository"
-                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                        sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    }
-                    sh "docker push ${IMAGE_TAG}"
-                    
+                    gv.login_to_docker(DOCKERHUB_CREDENTIALS_ID)
+                    gv.push_to_docker(IMAGE_TAG)
                 }
             }
         }
@@ -76,12 +73,10 @@ pipeline {
                 script {
                     echo "Provision Development Infra"
                     dir('terraform/dev'){
-                        sh "terraform init"
-                        sh "terraform apply --auto-approve"
-                        EC2_PUBLIC_IP_SERVER_1 = sh(
-                            script: "terraform output ec2_public_ip_server_1",
-                            returnStdout: true
-                        ).toString().trim()
+                        def output = gv.provision_ec2_with_terraform()
+                        DNS_NAME_LOAD_BALANCER = output[0]
+                        EC2_PUBLIC_IP_SERVER_1 = output[1]
+                        EC2_PUBLIC_IP_SERVER_2 = output[2]
 
                         echo "Waiting for EC2 instance(s) to initialize"
                         sleep(time: 120, unit: "SECONDS")
