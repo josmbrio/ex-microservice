@@ -139,7 +139,7 @@ pipeline {
 		}        
 		success {
 			echo "Pipeline executed successfully"
-			show_info_environment()
+			gv.show_info_environment()
 		}
 		failure {
             echo "Error in pipeline. Please check"
