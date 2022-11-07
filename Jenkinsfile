@@ -121,6 +121,7 @@ pipeline {
             steps {
                 script {
                     echo "Entering deployment stage"
+                    sh "kubectl create namespace ${APP_NAMESPACE}"
                     gv.deploy_to_k8s("./kubernetes/redis.yaml")
                     gv.deploy_to_k8s("./kubernetes/microservice.yaml")
                     K8S_APP_URL_LOAD_BALANCER = gv.get_url_load_balancer_k8s(APP_NAME, APP_NAMESPACE)
