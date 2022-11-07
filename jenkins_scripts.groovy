@@ -59,9 +59,8 @@ def deploy_app_to_ec2(start_script, docker_compose_file, image_tag, ip_address) 
     sh "ssh -o StrictHostKeyChecking=no ${ec2_instance} ${shell_cmd}"
 }
 
-def deploy_to_k8s() {
-    sh 'envsubst < ./kubernetes/redis.yaml | kubectl apply -f -'
-    sh 'envsubst < ./kubernetes/microservice.yaml | kubectl apply -f -'
+def deploy_to_k8s(file_path) {
+    sh 'envsubst < ${file_path} | kubectl apply -f -'
 }
 
 def get_url_load_balancer_k8s(svc, namespace) {
