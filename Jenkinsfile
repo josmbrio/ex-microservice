@@ -121,12 +121,12 @@ pipeline {
             steps {
                 script {
                     environment {
-                        KUBE_CONFIG=""
+                        KUBECONFIG=""
                     }
                     echo "Entering deployment stage"
 
                     withCredentials([file(credentialsId: 'kube_config_aws_eks', variable: 'kube_config_aws_eks')]) {
-                        KUBE_CONFIG = kube_config_aws_eks
+                        KUBECONFIG = kube_config_aws_eks
                         gv.deploy_to_k8s("./kubernetes/redis.yaml")
                         gv.deploy_to_k8s("./kubernetes/microservice.yaml")
                         K8S_APP_URL_LOAD_BALANCER = gv.get_url_load_balancer_k8s(APP_NAME, APP_NAMESPACE)
