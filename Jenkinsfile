@@ -133,7 +133,7 @@ pipeline {
                         K8S_APP_URL_LOAD_BALANCER.replace('"','')
                     }
 
-                    echo "---------FOR PRODUCTION ENVIRONMENT-----------"
+                    echo "---------FOR PRODUCTION ENVIRONMENT----------"
                     echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}/health"
                 }
             }
