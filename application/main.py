@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from routes.endpoints import info
 from routes.token import authorization
 from flask_jwt_extended import JWTManager
@@ -24,6 +24,20 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
 
 application.register_blueprint(authorization)
 application.register_blueprint(info)
+
+
+@application.errorhandler(405)
+def error_405(error=None):
+    response = jsonify({"message": "ERROR"})
+    response.status_code = 405
+    return response
+
+
+@application.errorhandler(404)
+def error_404(error=None):
+    response = jsonify({"message": "ERROR"})
+    response.status_code = 404
+    return response
 
 
 if __name__ == '__main__':
