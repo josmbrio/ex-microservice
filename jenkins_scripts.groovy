@@ -1,4 +1,4 @@
-def analyze_code_with_sonar() {}
+def analyze_code_with_sonar() {
     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'TOKEN')]) {
         sh "/usr/local/sonar-scanner/bin/sonar-scanner \
             -Dsonar.projectKey=ex-microservices \
@@ -68,7 +68,7 @@ def get_url_load_balancer_k8s(svc, namespace) {
     sh "kubectl get svc/${svc} -n ${namespace} -o jsonpath='{.status.loadBalancer.ingress[*].hostname}'"
 }
 
-def show_info_environment() {
+/*def show_info_environment() {
     if (EC2_URL_LOAD_BALANCER != null) {
         echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
         echo "${EC2_URL_LOAD_BALANCER}"
@@ -79,6 +79,6 @@ def show_info_environment() {
         echo "---------FOR PRODUCTION ENVIRONMENT-----------"
         echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}"
     }
-}
+}*/
 
 return this

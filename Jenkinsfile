@@ -141,7 +141,16 @@ pipeline {
 			echo "Pipeline executed successfully"
 			steps {
 			    script {
-                    gv.show_info_environment()
+                    if (EC2_URL_LOAD_BALANCER != null) {
+                        echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
+                        echo "${EC2_URL_LOAD_BALANCER}"
+                        echo "${EC2_PUBLIC_IP_SERVER_1}"
+                        echo "URL: http://${EC2_URL_LOAD_BALANCER}/health"
+                    }
+                    if (K8S_APP_URL_LOAD_BALANCER != null) {
+                        echo "---------FOR PRODUCTION ENVIRONMENT-----------"
+                        echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}"
+                    }
 			    }
 			}
 		}
