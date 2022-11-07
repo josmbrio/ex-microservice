@@ -45,7 +45,7 @@ def provision_ec2_with_terraform() {
 }
 
 def deploy_app_to_ec2(start_script, docker_compose_file, image_tag, ip_address) {
-    def shell_cmd = "bash ${start_file} ${image_tag}"
+    def shell_cmd = "bash ${start_script} ${image_tag}"
     def ec2_instance = "ec2-user@${ip_address}"
     def home_dir = "/home/ec2-user/"
     sh "scp -o StrictHostKeyChecking=no ${start_script} ${ec2_instance}:${home_dir}"
