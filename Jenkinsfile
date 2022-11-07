@@ -31,12 +31,13 @@ pipeline {
             steps{
                 script {
                     dir('application') {
-                        def SONARQUBE_TOKEN = credentials('sonarqube-token')
-                        sh "/usr/local/sonar-scanner/bin/sonar-scanner \
-                            -Dsonar.projectKey=ex-microservices \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://localhost:4000 \
-                            -Dsonar.login=${SONARQUBE_TOKEN}"
+                        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'TOKEN')]) {
+                            sh "/usr/local/sonar-scanner/bin/sonar-scanner \
+                                -Dsonar.projectKey=ex-microservices \
+                                -Dsonar.sources=. \
+                                -Dsonar.host.url=http://sonarqube-server:4000 \
+                                -Dsonar.login=${TOKEN}"
+                        }
                     }
                 }
             }
