@@ -138,8 +138,10 @@ pipeline {
             echo "############  END OF PIPELINE ############"
 		}        
 		success {
-			echo "Pipeline executed successfully"
-			gv.show_info_environment()
+		    script {
+		        echo "Pipeline executed successfully"
+		        gv.show_info_environment()
+		    }
 		}
 		failure {
             echo "Error in pipeline. Please check"
