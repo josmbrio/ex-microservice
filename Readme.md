@@ -83,8 +83,8 @@ curl -X GET
     - **Deploy in Prod Environment Stage:** Kubernetes in AWS EKS
     - I used Multibranch pipeline in Jenkins using Jenkinsfile
     
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5bc04f21-d8d6-47c5-ac7f-28c2bab25a4c/Untitled.png)
+## Check here a visual representation of pipeline from Jenkins
+https://josmbrio.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F5bc04f21-d8d6-47c5-ac7f-28c2bab25a4c%2FUntitled.png?table=block&id=0c02662e-f4fe-4659-886f-780c474946c7&spaceId=2f938e50-4f72-4307-95af-e450898e4b32&width=2000&userId=&cache=v2
 
 ## Take into consideration:
 
@@ -102,3 +102,4 @@ curl -X GET
 - Use Ansible in pipeline for installing and configuring docker in EC2 instances instead of linux commands
 - Use a non-root user when buiding docker image
 - Secure connection with HTTPS protocol.
+
