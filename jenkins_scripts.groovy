@@ -1,5 +1,11 @@
-def test_code() {
-    sh "python -m pytest"
+def analyze_code_with_sonar() {}
+    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'TOKEN')]) {
+        sh "/usr/local/sonar-scanner/bin/sonar-scanner \
+            -Dsonar.projectKey=ex-microservices \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://sonarqube-server:4000 \
+            -Dsonar.login=${TOKEN}"
+    }
 }
 
 def build_docker_image(image_tag) {
@@ -58,7 +64,7 @@ def deploy_to_k8s() {
     sh 'envsubst < ./kubernetes/microservice.yaml | kubectl apply -f -'
 }
 
-def get_url_load_balancer(svc, namespace) {
+def get_url_load_balancer_k8s(svc, namespace) {
     sh "kubectl get svc/${svc} -n ${namespace} -o jsonpath='{.status.loadBalancer.ingress[*].hostname}'"
 }
 

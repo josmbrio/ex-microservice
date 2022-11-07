@@ -31,13 +31,7 @@ pipeline {
             steps{
                 script {
                     dir('application') {
-                        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'TOKEN')]) {
-                            sh "/usr/local/sonar-scanner/bin/sonar-scanner \
-                                -Dsonar.projectKey=ex-microservices \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=http://sonarqube-server:4000 \
-                                -Dsonar.login=${TOKEN}"
-                        }
+                        gv.analyze_code_with_sonar()
                     }
                 }
             }
@@ -132,7 +126,7 @@ pipeline {
                         KUBE_CONFIG = kube_config_aws_eks
                         gv.deploy_to_k8s("./kubernetes/redis.yaml")
                         gv.deploy_to_k8s("./kubernetes/microservice.yaml")
-                        K8S_APP_URL_LOAD_BALANCER = gv.get_url_load_balancer(APP_NAME, APP_NAMESPACE)
+                        K8S_APP_URL_LOAD_BALANCER = gv.get_url_load_balancer_k8s(APP_NAME, APP_NAMESPACE)
                     }
                 }
             }
@@ -145,11 +139,16 @@ pipeline {
 		}        
 		success {
 			echo "Pipeline executed successfully"
-			echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
-            echo "URL: http://${EC2_URL_LOAD_BALANCER}"
-
-            echo "---------FOR PRODUCTION ENVIRONMENT-----------"
-            echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}"
+			if (EC2_URL_LOAD_BALANCER != null) {
+			    echo "---------FOR DEVELOPMENT ENVIRONMENT-----------"
+			    echo "${EC2_URL_LOAD_BALANCER}"
+			    echo "${EC2_PUBLIC_IP_SERVER_1}"
+			    echo "URL: http://${EC2_URL_LOAD_BALANCER}/health"
+			}
+			if (K8S_APP_URL_LOAD_BALANCER != null) {
+			    echo "---------FOR PRODUCTION ENVIRONMENT-----------"
+			    echo "URL: http://${K8S_APP_URL_LOAD_BALANCER}"
+			}
 		}
 		failure {
             echo "Error in pipeline. Please check"
