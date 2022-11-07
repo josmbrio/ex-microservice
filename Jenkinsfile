@@ -32,7 +32,7 @@ pipeline {
                 script {
                     dir('application') {
                         def SONARQUBE_TOKEN = credentials('sonarqube-token')
-                        sh "sonar-scanner \
+                        sh "/usr/local/sonar-scanner/bin/sonar-scanner \
                             -Dsonar.projectKey=ex-microservices \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=http://localhost:4000 \
